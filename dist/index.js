@@ -1815,7 +1815,7 @@ exports.prepareKeyValueMessage = exports.issueFileCommand = void 0;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const fs = __importStar(__nccwpck_require__(7147));
 const os = __importStar(__nccwpck_require__(2037));
-const uuid_1 = __nccwpck_require__(5840);
+const uuid_1 = __nccwpck_require__(8974);
 const utils_1 = __nccwpck_require__(5278);
 function issueFileCommand(command, message) {
     const filePath = process.env[`GITHUB_${command}`];
@@ -2332,6 +2332,652 @@ function toCommandProperties(annotationProperties) {
 }
 exports.toCommandProperties = toCommandProperties;
 //# sourceMappingURL=utils.js.map
+
+/***/ }),
+
+/***/ 8974:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+Object.defineProperty(exports, "v1", ({
+  enumerable: true,
+  get: function () {
+    return _v.default;
+  }
+}));
+Object.defineProperty(exports, "v3", ({
+  enumerable: true,
+  get: function () {
+    return _v2.default;
+  }
+}));
+Object.defineProperty(exports, "v4", ({
+  enumerable: true,
+  get: function () {
+    return _v3.default;
+  }
+}));
+Object.defineProperty(exports, "v5", ({
+  enumerable: true,
+  get: function () {
+    return _v4.default;
+  }
+}));
+Object.defineProperty(exports, "NIL", ({
+  enumerable: true,
+  get: function () {
+    return _nil.default;
+  }
+}));
+Object.defineProperty(exports, "version", ({
+  enumerable: true,
+  get: function () {
+    return _version.default;
+  }
+}));
+Object.defineProperty(exports, "validate", ({
+  enumerable: true,
+  get: function () {
+    return _validate.default;
+  }
+}));
+Object.defineProperty(exports, "stringify", ({
+  enumerable: true,
+  get: function () {
+    return _stringify.default;
+  }
+}));
+Object.defineProperty(exports, "parse", ({
+  enumerable: true,
+  get: function () {
+    return _parse.default;
+  }
+}));
+
+var _v = _interopRequireDefault(__nccwpck_require__(1595));
+
+var _v2 = _interopRequireDefault(__nccwpck_require__(6993));
+
+var _v3 = _interopRequireDefault(__nccwpck_require__(1472));
+
+var _v4 = _interopRequireDefault(__nccwpck_require__(6217));
+
+var _nil = _interopRequireDefault(__nccwpck_require__(2381));
+
+var _version = _interopRequireDefault(__nccwpck_require__(427));
+
+var _validate = _interopRequireDefault(__nccwpck_require__(2609));
+
+var _stringify = _interopRequireDefault(__nccwpck_require__(1458));
+
+var _parse = _interopRequireDefault(__nccwpck_require__(6385));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+
+/***/ 5842:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _crypto = _interopRequireDefault(__nccwpck_require__(6113));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function md5(bytes) {
+  if (Array.isArray(bytes)) {
+    bytes = Buffer.from(bytes);
+  } else if (typeof bytes === 'string') {
+    bytes = Buffer.from(bytes, 'utf8');
+  }
+
+  return _crypto.default.createHash('md5').update(bytes).digest();
+}
+
+var _default = md5;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 2381:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _default = '00000000-0000-0000-0000-000000000000';
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 6385:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _validate = _interopRequireDefault(__nccwpck_require__(2609));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function parse(uuid) {
+  if (!(0, _validate.default)(uuid)) {
+    throw TypeError('Invalid UUID');
+  }
+
+  let v;
+  const arr = new Uint8Array(16); // Parse ########-....-....-....-............
+
+  arr[0] = (v = parseInt(uuid.slice(0, 8), 16)) >>> 24;
+  arr[1] = v >>> 16 & 0xff;
+  arr[2] = v >>> 8 & 0xff;
+  arr[3] = v & 0xff; // Parse ........-####-....-....-............
+
+  arr[4] = (v = parseInt(uuid.slice(9, 13), 16)) >>> 8;
+  arr[5] = v & 0xff; // Parse ........-....-####-....-............
+
+  arr[6] = (v = parseInt(uuid.slice(14, 18), 16)) >>> 8;
+  arr[7] = v & 0xff; // Parse ........-....-....-####-............
+
+  arr[8] = (v = parseInt(uuid.slice(19, 23), 16)) >>> 8;
+  arr[9] = v & 0xff; // Parse ........-....-....-....-############
+  // (Use "/" to avoid 32-bit truncation when bit-shifting high-order bytes)
+
+  arr[10] = (v = parseInt(uuid.slice(24, 36), 16)) / 0x10000000000 & 0xff;
+  arr[11] = v / 0x100000000 & 0xff;
+  arr[12] = v >>> 24 & 0xff;
+  arr[13] = v >>> 16 & 0xff;
+  arr[14] = v >>> 8 & 0xff;
+  arr[15] = v & 0xff;
+  return arr;
+}
+
+var _default = parse;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 6230:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 9784:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = rng;
+
+var _crypto = _interopRequireDefault(__nccwpck_require__(6113));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const rnds8Pool = new Uint8Array(256); // # of random values to pre-allocate
+
+let poolPtr = rnds8Pool.length;
+
+function rng() {
+  if (poolPtr > rnds8Pool.length - 16) {
+    _crypto.default.randomFillSync(rnds8Pool);
+
+    poolPtr = 0;
+  }
+
+  return rnds8Pool.slice(poolPtr, poolPtr += 16);
+}
+
+/***/ }),
+
+/***/ 8844:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _crypto = _interopRequireDefault(__nccwpck_require__(6113));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function sha1(bytes) {
+  if (Array.isArray(bytes)) {
+    bytes = Buffer.from(bytes);
+  } else if (typeof bytes === 'string') {
+    bytes = Buffer.from(bytes, 'utf8');
+  }
+
+  return _crypto.default.createHash('sha1').update(bytes).digest();
+}
+
+var _default = sha1;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 1458:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _validate = _interopRequireDefault(__nccwpck_require__(2609));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+const byteToHex = [];
+
+for (let i = 0; i < 256; ++i) {
+  byteToHex.push((i + 0x100).toString(16).substr(1));
+}
+
+function stringify(arr, offset = 0) {
+  // Note: Be careful editing this code!  It's been tuned for performance
+  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
+  const uuid = (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase(); // Consistency check for valid UUID.  If this throws, it's likely due to one
+  // of the following:
+  // - One or more input array values don't map to a hex octet (leading to
+  // "undefined" in the uuid)
+  // - Invalid input values for the RFC `version` or `variant` fields
+
+  if (!(0, _validate.default)(uuid)) {
+    throw TypeError('Stringified UUID is invalid');
+  }
+
+  return uuid;
+}
+
+var _default = stringify;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 1595:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _rng = _interopRequireDefault(__nccwpck_require__(9784));
+
+var _stringify = _interopRequireDefault(__nccwpck_require__(1458));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// **`v1()` - Generate time-based UUID**
+//
+// Inspired by https://github.com/LiosK/UUID.js
+// and http://docs.python.org/library/uuid.html
+let _nodeId;
+
+let _clockseq; // Previous uuid creation time
+
+
+let _lastMSecs = 0;
+let _lastNSecs = 0; // See https://github.com/uuidjs/uuid for API details
+
+function v1(options, buf, offset) {
+  let i = buf && offset || 0;
+  const b = buf || new Array(16);
+  options = options || {};
+  let node = options.node || _nodeId;
+  let clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq; // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+
+  if (node == null || clockseq == null) {
+    const seedBytes = options.random || (options.rng || _rng.default)();
+
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [seedBytes[0] | 0x01, seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]];
+    }
+
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
+    }
+  } // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+
+
+  let msecs = options.msecs !== undefined ? options.msecs : Date.now(); // Per 4.2.1.2, use count of uuid's generated during the current clock
+  // cycle to simulate higher resolution clock
+
+  let nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1; // Time since last uuid creation (in msecs)
+
+  const dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 10000; // Per 4.2.1.2, Bump clockseq on clock regression
+
+  if (dt < 0 && options.clockseq === undefined) {
+    clockseq = clockseq + 1 & 0x3fff;
+  } // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+  // time interval
+
+
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+    nsecs = 0;
+  } // Per 4.2.1.2 Throw error if too many uuids are requested
+
+
+  if (nsecs >= 10000) {
+    throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
+  }
+
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq; // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+
+  msecs += 12219292800000; // `time_low`
+
+  const tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+  b[i++] = tl >>> 24 & 0xff;
+  b[i++] = tl >>> 16 & 0xff;
+  b[i++] = tl >>> 8 & 0xff;
+  b[i++] = tl & 0xff; // `time_mid`
+
+  const tmh = msecs / 0x100000000 * 10000 & 0xfffffff;
+  b[i++] = tmh >>> 8 & 0xff;
+  b[i++] = tmh & 0xff; // `time_high_and_version`
+
+  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+
+  b[i++] = tmh >>> 16 & 0xff; // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+
+  b[i++] = clockseq >>> 8 | 0x80; // `clock_seq_low`
+
+  b[i++] = clockseq & 0xff; // `node`
+
+  for (let n = 0; n < 6; ++n) {
+    b[i + n] = node[n];
+  }
+
+  return buf || (0, _stringify.default)(b);
+}
+
+var _default = v1;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 6993:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _v = _interopRequireDefault(__nccwpck_require__(5920));
+
+var _md = _interopRequireDefault(__nccwpck_require__(5842));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const v3 = (0, _v.default)('v3', 0x30, _md.default);
+var _default = v3;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 5920:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = _default;
+exports.URL = exports.DNS = void 0;
+
+var _stringify = _interopRequireDefault(__nccwpck_require__(1458));
+
+var _parse = _interopRequireDefault(__nccwpck_require__(6385));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function stringToBytes(str) {
+  str = unescape(encodeURIComponent(str)); // UTF8 escape
+
+  const bytes = [];
+
+  for (let i = 0; i < str.length; ++i) {
+    bytes.push(str.charCodeAt(i));
+  }
+
+  return bytes;
+}
+
+const DNS = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+exports.DNS = DNS;
+const URL = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
+exports.URL = URL;
+
+function _default(name, version, hashfunc) {
+  function generateUUID(value, namespace, buf, offset) {
+    if (typeof value === 'string') {
+      value = stringToBytes(value);
+    }
+
+    if (typeof namespace === 'string') {
+      namespace = (0, _parse.default)(namespace);
+    }
+
+    if (namespace.length !== 16) {
+      throw TypeError('Namespace must be array-like (16 iterable integer values, 0-255)');
+    } // Compute hash of namespace and value, Per 4.3
+    // Future: Use spread syntax when supported on all platforms, e.g. `bytes =
+    // hashfunc([...namespace, ... value])`
+
+
+    let bytes = new Uint8Array(16 + value.length);
+    bytes.set(namespace);
+    bytes.set(value, namespace.length);
+    bytes = hashfunc(bytes);
+    bytes[6] = bytes[6] & 0x0f | version;
+    bytes[8] = bytes[8] & 0x3f | 0x80;
+
+    if (buf) {
+      offset = offset || 0;
+
+      for (let i = 0; i < 16; ++i) {
+        buf[offset + i] = bytes[i];
+      }
+
+      return buf;
+    }
+
+    return (0, _stringify.default)(bytes);
+  } // Function#name is not settable on some platforms (#270)
+
+
+  try {
+    generateUUID.name = name; // eslint-disable-next-line no-empty
+  } catch (err) {} // For CommonJS default export support
+
+
+  generateUUID.DNS = DNS;
+  generateUUID.URL = URL;
+  return generateUUID;
+}
+
+/***/ }),
+
+/***/ 1472:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _rng = _interopRequireDefault(__nccwpck_require__(9784));
+
+var _stringify = _interopRequireDefault(__nccwpck_require__(1458));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function v4(options, buf, offset) {
+  options = options || {};
+
+  const rnds = options.random || (options.rng || _rng.default)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+
+  rnds[6] = rnds[6] & 0x0f | 0x40;
+  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+  if (buf) {
+    offset = offset || 0;
+
+    for (let i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+
+    return buf;
+  }
+
+  return (0, _stringify.default)(rnds);
+}
+
+var _default = v4;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 6217:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _v = _interopRequireDefault(__nccwpck_require__(5920));
+
+var _sha = _interopRequireDefault(__nccwpck_require__(8844));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const v5 = (0, _v.default)('v5', 0x50, _sha.default);
+var _default = v5;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 2609:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _regex = _interopRequireDefault(__nccwpck_require__(6230));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function validate(uuid) {
+  return typeof uuid === 'string' && _regex.default.test(uuid);
+}
+
+var _default = validate;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 427:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _validate = _interopRequireDefault(__nccwpck_require__(2609));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function version(uuid) {
+  if (!(0, _validate.default)(uuid)) {
+    throw TypeError('Invalid UUID');
+  }
+
+  return parseInt(uuid.substr(14, 1), 16);
+}
+
+var _default = version;
+exports["default"] = _default;
 
 /***/ }),
 
@@ -5366,61 +6012,10 @@ exports.paginatingEndpoints = paginatingEndpoints;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-
-    if (enumerableOnly) {
-      symbols = symbols.filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-      });
-    }
-
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread2(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
 const Endpoints = {
   actions: {
+    addCustomLabelsToSelfHostedRunnerForOrg: ["POST /orgs/{org}/actions/runners/{runner_id}/labels"],
+    addCustomLabelsToSelfHostedRunnerForRepo: ["POST /repos/{owner}/{repo}/actions/runners/{runner_id}/labels"],
     addSelectedRepoToOrgSecret: ["PUT /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}"],
     approveWorkflowRun: ["POST /repos/{owner}/{repo}/actions/runs/{run_id}/approve"],
     cancelWorkflowRun: ["POST /repos/{owner}/{repo}/actions/runs/{run_id}/cancel"],
@@ -5432,6 +6027,8 @@ const Endpoints = {
     createRemoveTokenForOrg: ["POST /orgs/{org}/actions/runners/remove-token"],
     createRemoveTokenForRepo: ["POST /repos/{owner}/{repo}/actions/runners/remove-token"],
     createWorkflowDispatch: ["POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches"],
+    deleteActionsCacheById: ["DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}"],
+    deleteActionsCacheByKey: ["DELETE /repos/{owner}/{repo}/actions/caches{?key,ref}"],
     deleteArtifact: ["DELETE /repos/{owner}/{repo}/actions/artifacts/{artifact_id}"],
     deleteEnvironmentSecret: ["DELETE /repositories/{repository_id}/environments/{environment_name}/secrets/{secret_name}"],
     deleteOrgSecret: ["DELETE /orgs/{org}/actions/secrets/{secret_name}"],
@@ -5448,11 +6045,19 @@ const Endpoints = {
     downloadWorkflowRunLogs: ["GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs"],
     enableSelectedRepositoryGithubActionsOrganization: ["PUT /orgs/{org}/actions/permissions/repositories/{repository_id}"],
     enableWorkflow: ["PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/enable"],
+    getActionsCacheList: ["GET /repos/{owner}/{repo}/actions/caches"],
+    getActionsCacheUsage: ["GET /repos/{owner}/{repo}/actions/cache/usage"],
+    getActionsCacheUsageByRepoForOrg: ["GET /orgs/{org}/actions/cache/usage-by-repository"],
+    getActionsCacheUsageForEnterprise: ["GET /enterprises/{enterprise}/actions/cache/usage"],
+    getActionsCacheUsageForOrg: ["GET /orgs/{org}/actions/cache/usage"],
     getAllowedActionsOrganization: ["GET /orgs/{org}/actions/permissions/selected-actions"],
     getAllowedActionsRepository: ["GET /repos/{owner}/{repo}/actions/permissions/selected-actions"],
     getArtifact: ["GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}"],
     getEnvironmentPublicKey: ["GET /repositories/{repository_id}/environments/{environment_name}/secrets/public-key"],
     getEnvironmentSecret: ["GET /repositories/{repository_id}/environments/{environment_name}/secrets/{secret_name}"],
+    getGithubActionsDefaultWorkflowPermissionsEnterprise: ["GET /enterprises/{enterprise}/actions/permissions/workflow"],
+    getGithubActionsDefaultWorkflowPermissionsOrganization: ["GET /orgs/{org}/actions/permissions/workflow"],
+    getGithubActionsDefaultWorkflowPermissionsRepository: ["GET /repos/{owner}/{repo}/actions/permissions/workflow"],
     getGithubActionsPermissionsOrganization: ["GET /orgs/{org}/actions/permissions"],
     getGithubActionsPermissionsRepository: ["GET /repos/{owner}/{repo}/actions/permissions"],
     getJobForWorkflowRun: ["GET /repos/{owner}/{repo}/actions/jobs/{job_id}"],
@@ -5468,6 +6073,7 @@ const Endpoints = {
     getSelfHostedRunnerForOrg: ["GET /orgs/{org}/actions/runners/{runner_id}"],
     getSelfHostedRunnerForRepo: ["GET /repos/{owner}/{repo}/actions/runners/{runner_id}"],
     getWorkflow: ["GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}"],
+    getWorkflowAccessToRepository: ["GET /repos/{owner}/{repo}/actions/permissions/access"],
     getWorkflowRun: ["GET /repos/{owner}/{repo}/actions/runs/{run_id}"],
     getWorkflowRunAttempt: ["GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}"],
     getWorkflowRunUsage: ["GET /repos/{owner}/{repo}/actions/runs/{run_id}/timing"],
@@ -5476,6 +6082,8 @@ const Endpoints = {
     listEnvironmentSecrets: ["GET /repositories/{repository_id}/environments/{environment_name}/secrets"],
     listJobsForWorkflowRun: ["GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs"],
     listJobsForWorkflowRunAttempt: ["GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}/jobs"],
+    listLabelsForSelfHostedRunnerForOrg: ["GET /orgs/{org}/actions/runners/{runner_id}/labels"],
+    listLabelsForSelfHostedRunnerForRepo: ["GET /repos/{owner}/{repo}/actions/runners/{runner_id}/labels"],
     listOrgSecrets: ["GET /orgs/{org}/actions/secrets"],
     listRepoSecrets: ["GET /repos/{owner}/{repo}/actions/secrets"],
     listRepoWorkflows: ["GET /repos/{owner}/{repo}/actions/workflows"],
@@ -5488,14 +6096,27 @@ const Endpoints = {
     listWorkflowRunArtifacts: ["GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts"],
     listWorkflowRuns: ["GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs"],
     listWorkflowRunsForRepo: ["GET /repos/{owner}/{repo}/actions/runs"],
+    reRunJobForWorkflowRun: ["POST /repos/{owner}/{repo}/actions/jobs/{job_id}/rerun"],
+    reRunWorkflow: ["POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun"],
+    reRunWorkflowFailedJobs: ["POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun-failed-jobs"],
+    removeAllCustomLabelsFromSelfHostedRunnerForOrg: ["DELETE /orgs/{org}/actions/runners/{runner_id}/labels"],
+    removeAllCustomLabelsFromSelfHostedRunnerForRepo: ["DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}/labels"],
+    removeCustomLabelFromSelfHostedRunnerForOrg: ["DELETE /orgs/{org}/actions/runners/{runner_id}/labels/{name}"],
+    removeCustomLabelFromSelfHostedRunnerForRepo: ["DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}/labels/{name}"],
     removeSelectedRepoFromOrgSecret: ["DELETE /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}"],
     reviewPendingDeploymentsForRun: ["POST /repos/{owner}/{repo}/actions/runs/{run_id}/pending_deployments"],
     setAllowedActionsOrganization: ["PUT /orgs/{org}/actions/permissions/selected-actions"],
     setAllowedActionsRepository: ["PUT /repos/{owner}/{repo}/actions/permissions/selected-actions"],
+    setCustomLabelsForSelfHostedRunnerForOrg: ["PUT /orgs/{org}/actions/runners/{runner_id}/labels"],
+    setCustomLabelsForSelfHostedRunnerForRepo: ["PUT /repos/{owner}/{repo}/actions/runners/{runner_id}/labels"],
+    setGithubActionsDefaultWorkflowPermissionsEnterprise: ["PUT /enterprises/{enterprise}/actions/permissions/workflow"],
+    setGithubActionsDefaultWorkflowPermissionsOrganization: ["PUT /orgs/{org}/actions/permissions/workflow"],
+    setGithubActionsDefaultWorkflowPermissionsRepository: ["PUT /repos/{owner}/{repo}/actions/permissions/workflow"],
     setGithubActionsPermissionsOrganization: ["PUT /orgs/{org}/actions/permissions"],
     setGithubActionsPermissionsRepository: ["PUT /repos/{owner}/{repo}/actions/permissions"],
     setSelectedReposForOrgSecret: ["PUT /orgs/{org}/actions/secrets/{secret_name}/repositories"],
-    setSelectedRepositoriesEnabledGithubActionsOrganization: ["PUT /orgs/{org}/actions/permissions/repositories"]
+    setSelectedRepositoriesEnabledGithubActionsOrganization: ["PUT /orgs/{org}/actions/permissions/repositories"],
+    setWorkflowAccessToRepository: ["PUT /repos/{owner}/{repo}/actions/permissions/access"]
   },
   activity: {
     checkRepoIsStarredByAuthenticatedUser: ["GET /user/starred/{owner}/{repo}"],
@@ -5536,16 +6157,6 @@ const Endpoints = {
     }],
     addRepoToInstallationForAuthenticatedUser: ["PUT /user/installations/{installation_id}/repositories/{repository_id}"],
     checkToken: ["POST /applications/{client_id}/token"],
-    createContentAttachment: ["POST /content_references/{content_reference_id}/attachments", {
-      mediaType: {
-        previews: ["corsair"]
-      }
-    }],
-    createContentAttachmentForRepo: ["POST /repos/{owner}/{repo}/content_references/{content_reference_id}/attachments", {
-      mediaType: {
-        previews: ["corsair"]
-      }
-    }],
     createFromManifest: ["POST /app-manifests/{code}/conversions"],
     createInstallationAccessToken: ["POST /app/installations/{installation_id}/access_tokens"],
     deleteAuthorization: ["DELETE /applications/{client_id}/grant"],
@@ -5587,6 +6198,8 @@ const Endpoints = {
   billing: {
     getGithubActionsBillingOrg: ["GET /orgs/{org}/settings/billing/actions"],
     getGithubActionsBillingUser: ["GET /users/{username}/settings/billing/actions"],
+    getGithubAdvancedSecurityBillingGhe: ["GET /enterprises/{enterprise}/settings/billing/advanced-security"],
+    getGithubAdvancedSecurityBillingOrg: ["GET /orgs/{org}/settings/billing/advanced-security"],
     getGithubPackagesBillingOrg: ["GET /orgs/{org}/settings/billing/packages"],
     getGithubPackagesBillingUser: ["GET /users/{username}/settings/billing/packages"],
     getSharedStorageBillingOrg: ["GET /orgs/{org}/settings/billing/shared-storage"],
@@ -5614,12 +6227,16 @@ const Endpoints = {
       }
     }],
     getAnalysis: ["GET /repos/{owner}/{repo}/code-scanning/analyses/{analysis_id}"],
+    getCodeqlDatabase: ["GET /repos/{owner}/{repo}/code-scanning/codeql/databases/{language}"],
     getSarif: ["GET /repos/{owner}/{repo}/code-scanning/sarifs/{sarif_id}"],
     listAlertInstances: ["GET /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}/instances"],
+    listAlertsForEnterprise: ["GET /enterprises/{enterprise}/code-scanning/alerts"],
+    listAlertsForOrg: ["GET /orgs/{org}/code-scanning/alerts"],
     listAlertsForRepo: ["GET /repos/{owner}/{repo}/code-scanning/alerts"],
     listAlertsInstances: ["GET /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}/instances", {}, {
       renamed: ["codeScanning", "listAlertInstances"]
     }],
+    listCodeqlDatabases: ["GET /repos/{owner}/{repo}/code-scanning/codeql/databases"],
     listRecentAnalyses: ["GET /repos/{owner}/{repo}/code-scanning/analyses"],
     updateAlert: ["PATCH /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}"],
     uploadSarif: ["POST /repos/{owner}/{repo}/code-scanning/sarifs"]
@@ -5628,16 +6245,93 @@ const Endpoints = {
     getAllCodesOfConduct: ["GET /codes_of_conduct"],
     getConductCode: ["GET /codes_of_conduct/{key}"]
   },
+  codespaces: {
+    addRepositoryForSecretForAuthenticatedUser: ["PUT /user/codespaces/secrets/{secret_name}/repositories/{repository_id}"],
+    addSelectedRepoToOrgSecret: ["PUT /organizations/{org}/codespaces/secrets/{secret_name}/repositories/{repository_id}"],
+    codespaceMachinesForAuthenticatedUser: ["GET /user/codespaces/{codespace_name}/machines"],
+    createForAuthenticatedUser: ["POST /user/codespaces"],
+    createOrUpdateOrgSecret: ["PUT /organizations/{org}/codespaces/secrets/{secret_name}"],
+    createOrUpdateRepoSecret: ["PUT /repos/{owner}/{repo}/codespaces/secrets/{secret_name}"],
+    createOrUpdateSecretForAuthenticatedUser: ["PUT /user/codespaces/secrets/{secret_name}"],
+    createWithPrForAuthenticatedUser: ["POST /repos/{owner}/{repo}/pulls/{pull_number}/codespaces"],
+    createWithRepoForAuthenticatedUser: ["POST /repos/{owner}/{repo}/codespaces"],
+    deleteForAuthenticatedUser: ["DELETE /user/codespaces/{codespace_name}"],
+    deleteFromOrganization: ["DELETE /orgs/{org}/members/{username}/codespaces/{codespace_name}"],
+    deleteOrgSecret: ["DELETE /organizations/{org}/codespaces/secrets/{secret_name}"],
+    deleteRepoSecret: ["DELETE /repos/{owner}/{repo}/codespaces/secrets/{secret_name}"],
+    deleteSecretForAuthenticatedUser: ["DELETE /user/codespaces/secrets/{secret_name}"],
+    exportForAuthenticatedUser: ["POST /user/codespaces/{codespace_name}/exports"],
+    getExportDetailsForAuthenticatedUser: ["GET /user/codespaces/{codespace_name}/exports/{export_id}"],
+    getForAuthenticatedUser: ["GET /user/codespaces/{codespace_name}"],
+    getOrgPublicKey: ["GET /organizations/{org}/codespaces/secrets/public-key"],
+    getOrgSecret: ["GET /organizations/{org}/codespaces/secrets/{secret_name}"],
+    getPublicKeyForAuthenticatedUser: ["GET /user/codespaces/secrets/public-key"],
+    getRepoPublicKey: ["GET /repos/{owner}/{repo}/codespaces/secrets/public-key"],
+    getRepoSecret: ["GET /repos/{owner}/{repo}/codespaces/secrets/{secret_name}"],
+    getSecretForAuthenticatedUser: ["GET /user/codespaces/secrets/{secret_name}"],
+    listDevcontainersInRepositoryForAuthenticatedUser: ["GET /repos/{owner}/{repo}/codespaces/devcontainers"],
+    listForAuthenticatedUser: ["GET /user/codespaces"],
+    listInOrganization: ["GET /orgs/{org}/codespaces", {}, {
+      renamedParameters: {
+        org_id: "org"
+      }
+    }],
+    listInRepositoryForAuthenticatedUser: ["GET /repos/{owner}/{repo}/codespaces"],
+    listOrgSecrets: ["GET /organizations/{org}/codespaces/secrets"],
+    listRepoSecrets: ["GET /repos/{owner}/{repo}/codespaces/secrets"],
+    listRepositoriesForSecretForAuthenticatedUser: ["GET /user/codespaces/secrets/{secret_name}/repositories"],
+    listSecretsForAuthenticatedUser: ["GET /user/codespaces/secrets"],
+    listSelectedReposForOrgSecret: ["GET /organizations/{org}/codespaces/secrets/{secret_name}/repositories"],
+    preFlightWithRepoForAuthenticatedUser: ["GET /repos/{owner}/{repo}/codespaces/new"],
+    removeRepositoryForSecretForAuthenticatedUser: ["DELETE /user/codespaces/secrets/{secret_name}/repositories/{repository_id}"],
+    removeSelectedRepoFromOrgSecret: ["DELETE /organizations/{org}/codespaces/secrets/{secret_name}/repositories/{repository_id}"],
+    repoMachinesForAuthenticatedUser: ["GET /repos/{owner}/{repo}/codespaces/machines"],
+    setRepositoriesForSecretForAuthenticatedUser: ["PUT /user/codespaces/secrets/{secret_name}/repositories"],
+    setSelectedReposForOrgSecret: ["PUT /organizations/{org}/codespaces/secrets/{secret_name}/repositories"],
+    startForAuthenticatedUser: ["POST /user/codespaces/{codespace_name}/start"],
+    stopForAuthenticatedUser: ["POST /user/codespaces/{codespace_name}/stop"],
+    stopInOrganization: ["POST /orgs/{org}/members/{username}/codespaces/{codespace_name}/stop"],
+    updateForAuthenticatedUser: ["PATCH /user/codespaces/{codespace_name}"]
+  },
+  dependabot: {
+    addSelectedRepoToOrgSecret: ["PUT /orgs/{org}/dependabot/secrets/{secret_name}/repositories/{repository_id}"],
+    createOrUpdateOrgSecret: ["PUT /orgs/{org}/dependabot/secrets/{secret_name}"],
+    createOrUpdateRepoSecret: ["PUT /repos/{owner}/{repo}/dependabot/secrets/{secret_name}"],
+    deleteOrgSecret: ["DELETE /orgs/{org}/dependabot/secrets/{secret_name}"],
+    deleteRepoSecret: ["DELETE /repos/{owner}/{repo}/dependabot/secrets/{secret_name}"],
+    getAlert: ["GET /repos/{owner}/{repo}/dependabot/alerts/{alert_number}"],
+    getOrgPublicKey: ["GET /orgs/{org}/dependabot/secrets/public-key"],
+    getOrgSecret: ["GET /orgs/{org}/dependabot/secrets/{secret_name}"],
+    getRepoPublicKey: ["GET /repos/{owner}/{repo}/dependabot/secrets/public-key"],
+    getRepoSecret: ["GET /repos/{owner}/{repo}/dependabot/secrets/{secret_name}"],
+    listAlertsForRepo: ["GET /repos/{owner}/{repo}/dependabot/alerts"],
+    listOrgSecrets: ["GET /orgs/{org}/dependabot/secrets"],
+    listRepoSecrets: ["GET /repos/{owner}/{repo}/dependabot/secrets"],
+    listSelectedReposForOrgSecret: ["GET /orgs/{org}/dependabot/secrets/{secret_name}/repositories"],
+    removeSelectedRepoFromOrgSecret: ["DELETE /orgs/{org}/dependabot/secrets/{secret_name}/repositories/{repository_id}"],
+    setSelectedReposForOrgSecret: ["PUT /orgs/{org}/dependabot/secrets/{secret_name}/repositories"],
+    updateAlert: ["PATCH /repos/{owner}/{repo}/dependabot/alerts/{alert_number}"]
+  },
+  dependencyGraph: {
+    createRepositorySnapshot: ["POST /repos/{owner}/{repo}/dependency-graph/snapshots"],
+    diffRange: ["GET /repos/{owner}/{repo}/dependency-graph/compare/{basehead}"]
+  },
   emojis: {
     get: ["GET /emojis"]
   },
   enterpriseAdmin: {
+    addCustomLabelsToSelfHostedRunnerForEnterprise: ["POST /enterprises/{enterprise}/actions/runners/{runner_id}/labels"],
     disableSelectedOrganizationGithubActionsEnterprise: ["DELETE /enterprises/{enterprise}/actions/permissions/organizations/{org_id}"],
     enableSelectedOrganizationGithubActionsEnterprise: ["PUT /enterprises/{enterprise}/actions/permissions/organizations/{org_id}"],
     getAllowedActionsEnterprise: ["GET /enterprises/{enterprise}/actions/permissions/selected-actions"],
     getGithubActionsPermissionsEnterprise: ["GET /enterprises/{enterprise}/actions/permissions"],
+    getServerStatistics: ["GET /enterprise-installation/{enterprise_or_org}/server-statistics"],
+    listLabelsForSelfHostedRunnerForEnterprise: ["GET /enterprises/{enterprise}/actions/runners/{runner_id}/labels"],
     listSelectedOrganizationsEnabledGithubActionsEnterprise: ["GET /enterprises/{enterprise}/actions/permissions/organizations"],
+    removeAllCustomLabelsFromSelfHostedRunnerForEnterprise: ["DELETE /enterprises/{enterprise}/actions/runners/{runner_id}/labels"],
+    removeCustomLabelFromSelfHostedRunnerForEnterprise: ["DELETE /enterprises/{enterprise}/actions/runners/{runner_id}/labels/{name}"],
     setAllowedActionsEnterprise: ["PUT /enterprises/{enterprise}/actions/permissions/selected-actions"],
+    setCustomLabelsForSelfHostedRunnerForEnterprise: ["PUT /enterprises/{enterprise}/actions/runners/{runner_id}/labels"],
     setGithubActionsPermissionsEnterprise: ["PUT /enterprises/{enterprise}/actions/permissions"],
     setSelectedOrganizationsEnabledGithubActionsEnterprise: ["PUT /enterprises/{enterprise}/actions/permissions/organizations"]
   },
@@ -5790,15 +6484,19 @@ const Endpoints = {
     updateImport: ["PATCH /repos/{owner}/{repo}/import"]
   },
   orgs: {
+    addSecurityManagerTeam: ["PUT /orgs/{org}/security-managers/teams/{team_slug}"],
     blockUser: ["PUT /orgs/{org}/blocks/{username}"],
     cancelInvitation: ["DELETE /orgs/{org}/invitations/{invitation_id}"],
     checkBlockedUser: ["GET /orgs/{org}/blocks/{username}"],
     checkMembershipForUser: ["GET /orgs/{org}/members/{username}"],
     checkPublicMembershipForUser: ["GET /orgs/{org}/public_members/{username}"],
     convertMemberToOutsideCollaborator: ["PUT /orgs/{org}/outside_collaborators/{username}"],
+    createCustomRole: ["POST /orgs/{org}/custom_roles"],
     createInvitation: ["POST /orgs/{org}/invitations"],
     createWebhook: ["POST /orgs/{org}/hooks"],
+    deleteCustomRole: ["DELETE /orgs/{org}/custom_roles/{role_id}"],
     deleteWebhook: ["DELETE /orgs/{org}/hooks/{hook_id}"],
+    enableOrDisableSecurityProductOnAllOrgRepos: ["POST /orgs/{org}/{security_product}/{enablement}"],
     get: ["GET /orgs/{org}"],
     getMembershipForAuthenticatedUser: ["GET /user/memberships/orgs/{org}"],
     getMembershipForUser: ["GET /orgs/{org}/memberships/{username}"],
@@ -5808,7 +6506,9 @@ const Endpoints = {
     list: ["GET /organizations"],
     listAppInstallations: ["GET /orgs/{org}/installations"],
     listBlockedUsers: ["GET /orgs/{org}/blocks"],
+    listCustomRoles: ["GET /organizations/{organization_id}/custom_roles"],
     listFailedInvitations: ["GET /orgs/{org}/failed_invitations"],
+    listFineGrainedPermissions: ["GET /orgs/{org}/fine_grained_permissions"],
     listForAuthenticatedUser: ["GET /user/orgs"],
     listForUser: ["GET /users/{username}/orgs"],
     listInvitationTeams: ["GET /orgs/{org}/invitations/{invitation_id}/teams"],
@@ -5817,6 +6517,7 @@ const Endpoints = {
     listOutsideCollaborators: ["GET /orgs/{org}/outside_collaborators"],
     listPendingInvitations: ["GET /orgs/{org}/invitations"],
     listPublicMembers: ["GET /orgs/{org}/public_members"],
+    listSecurityManagerTeams: ["GET /orgs/{org}/security-managers"],
     listWebhookDeliveries: ["GET /orgs/{org}/hooks/{hook_id}/deliveries"],
     listWebhooks: ["GET /orgs/{org}/hooks"],
     pingWebhook: ["POST /orgs/{org}/hooks/{hook_id}/pings"],
@@ -5825,10 +6526,12 @@ const Endpoints = {
     removeMembershipForUser: ["DELETE /orgs/{org}/memberships/{username}"],
     removeOutsideCollaborator: ["DELETE /orgs/{org}/outside_collaborators/{username}"],
     removePublicMembershipForAuthenticatedUser: ["DELETE /orgs/{org}/public_members/{username}"],
+    removeSecurityManagerTeam: ["DELETE /orgs/{org}/security-managers/teams/{team_slug}"],
     setMembershipForUser: ["PUT /orgs/{org}/memberships/{username}"],
     setPublicMembershipForAuthenticatedUser: ["PUT /orgs/{org}/public_members/{username}"],
     unblockUser: ["DELETE /orgs/{org}/blocks/{username}"],
     update: ["PATCH /orgs/{org}"],
+    updateCustomRole: ["PATCH /orgs/{org}/custom_roles/{role_id}"],
     updateMembershipForAuthenticatedUser: ["PATCH /user/memberships/orgs/{org}"],
     updateWebhook: ["PATCH /orgs/{org}/hooks/{hook_id}"],
     updateWebhookConfigForOrg: ["PATCH /orgs/{org}/hooks/{hook_id}/config"]
@@ -5936,12 +6639,14 @@ const Endpoints = {
     deleteForIssue: ["DELETE /repos/{owner}/{repo}/issues/{issue_number}/reactions/{reaction_id}"],
     deleteForIssueComment: ["DELETE /repos/{owner}/{repo}/issues/comments/{comment_id}/reactions/{reaction_id}"],
     deleteForPullRequestComment: ["DELETE /repos/{owner}/{repo}/pulls/comments/{comment_id}/reactions/{reaction_id}"],
+    deleteForRelease: ["DELETE /repos/{owner}/{repo}/releases/{release_id}/reactions/{reaction_id}"],
     deleteForTeamDiscussion: ["DELETE /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/reactions/{reaction_id}"],
     deleteForTeamDiscussionComment: ["DELETE /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments/{comment_number}/reactions/{reaction_id}"],
     listForCommitComment: ["GET /repos/{owner}/{repo}/comments/{comment_id}/reactions"],
     listForIssue: ["GET /repos/{owner}/{repo}/issues/{issue_number}/reactions"],
     listForIssueComment: ["GET /repos/{owner}/{repo}/issues/comments/{comment_id}/reactions"],
     listForPullRequestReviewComment: ["GET /repos/{owner}/{repo}/pulls/comments/{comment_id}/reactions"],
+    listForRelease: ["GET /repos/{owner}/{repo}/releases/{release_id}/reactions"],
     listForTeamDiscussionCommentInOrg: ["GET /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments/{comment_number}/reactions"],
     listForTeamDiscussionInOrg: ["GET /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/reactions"]
   },
@@ -5965,6 +6670,7 @@ const Endpoints = {
     }],
     checkCollaborator: ["GET /repos/{owner}/{repo}/collaborators/{username}"],
     checkVulnerabilityAlerts: ["GET /repos/{owner}/{repo}/vulnerability-alerts"],
+    codeownersErrors: ["GET /repos/{owner}/{repo}/codeowners/errors"],
     compareCommits: ["GET /repos/{owner}/{repo}/compare/{base}...{head}"],
     compareCommitsWithBasehead: ["GET /repos/{owner}/{repo}/compare/{basehead}"],
     createAutolink: ["POST /repos/{owner}/{repo}/autolinks"],
@@ -5973,6 +6679,7 @@ const Endpoints = {
     createCommitStatus: ["POST /repos/{owner}/{repo}/statuses/{sha}"],
     createDeployKey: ["POST /repos/{owner}/{repo}/keys"],
     createDeployment: ["POST /repos/{owner}/{repo}/deployments"],
+    createDeploymentBranchPolicy: ["POST /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies"],
     createDeploymentStatus: ["POST /repos/{owner}/{repo}/deployments/{deployment_id}/statuses"],
     createDispatchEvent: ["POST /repos/{owner}/{repo}/dispatches"],
     createForAuthenticatedUser: ["POST /user/repos"],
@@ -5980,8 +6687,10 @@ const Endpoints = {
     createInOrg: ["POST /orgs/{org}/repos"],
     createOrUpdateEnvironment: ["PUT /repos/{owner}/{repo}/environments/{environment_name}"],
     createOrUpdateFileContents: ["PUT /repos/{owner}/{repo}/contents/{path}"],
+    createPagesDeployment: ["POST /repos/{owner}/{repo}/pages/deployment"],
     createPagesSite: ["POST /repos/{owner}/{repo}/pages"],
     createRelease: ["POST /repos/{owner}/{repo}/releases"],
+    createTagProtection: ["POST /repos/{owner}/{repo}/tags/protection"],
     createUsingTemplate: ["POST /repos/{template_owner}/{template_repo}/generate"],
     createWebhook: ["POST /repos/{owner}/{repo}/hooks"],
     declineInvitation: ["DELETE /user/repository_invitations/{invitation_id}", {}, {
@@ -5998,12 +6707,14 @@ const Endpoints = {
     deleteCommitSignatureProtection: ["DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures"],
     deleteDeployKey: ["DELETE /repos/{owner}/{repo}/keys/{key_id}"],
     deleteDeployment: ["DELETE /repos/{owner}/{repo}/deployments/{deployment_id}"],
+    deleteDeploymentBranchPolicy: ["DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}"],
     deleteFile: ["DELETE /repos/{owner}/{repo}/contents/{path}"],
     deleteInvitation: ["DELETE /repos/{owner}/{repo}/invitations/{invitation_id}"],
     deletePagesSite: ["DELETE /repos/{owner}/{repo}/pages"],
     deletePullRequestReviewProtection: ["DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews"],
     deleteRelease: ["DELETE /repos/{owner}/{repo}/releases/{release_id}"],
     deleteReleaseAsset: ["DELETE /repos/{owner}/{repo}/releases/assets/{asset_id}"],
+    deleteTagProtection: ["DELETE /repos/{owner}/{repo}/tags/protection/{tag_protection_id}"],
     deleteWebhook: ["DELETE /repos/{owner}/{repo}/hooks/{hook_id}"],
     disableAutomatedSecurityFixes: ["DELETE /repos/{owner}/{repo}/automated-security-fixes"],
     disableLfsForRepo: ["DELETE /repos/{owner}/{repo}/lfs"],
@@ -6022,11 +6733,7 @@ const Endpoints = {
     getAdminBranchProtection: ["GET /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins"],
     getAllEnvironments: ["GET /repos/{owner}/{repo}/environments"],
     getAllStatusCheckContexts: ["GET /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts"],
-    getAllTopics: ["GET /repos/{owner}/{repo}/topics", {
-      mediaType: {
-        previews: ["mercy"]
-      }
-    }],
+    getAllTopics: ["GET /repos/{owner}/{repo}/topics"],
     getAppsWithAccessToProtectedBranch: ["GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps"],
     getAutolink: ["GET /repos/{owner}/{repo}/autolinks/{autolink_id}"],
     getBranch: ["GET /repos/{owner}/{repo}/branches/{branch}"],
@@ -6044,6 +6751,7 @@ const Endpoints = {
     getContributorsStats: ["GET /repos/{owner}/{repo}/stats/contributors"],
     getDeployKey: ["GET /repos/{owner}/{repo}/keys/{key_id}"],
     getDeployment: ["GET /repos/{owner}/{repo}/deployments/{deployment_id}"],
+    getDeploymentBranchPolicy: ["GET /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}"],
     getDeploymentStatus: ["GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses/{status_id}"],
     getEnvironment: ["GET /repos/{owner}/{repo}/environments/{environment_name}"],
     getLatestPagesBuild: ["GET /repos/{owner}/{repo}/pages/builds/latest"],
@@ -6078,6 +6786,7 @@ const Endpoints = {
     listCommits: ["GET /repos/{owner}/{repo}/commits"],
     listContributors: ["GET /repos/{owner}/{repo}/contributors"],
     listDeployKeys: ["GET /repos/{owner}/{repo}/keys"],
+    listDeploymentBranchPolicies: ["GET /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies"],
     listDeploymentStatuses: ["GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses"],
     listDeployments: ["GET /repos/{owner}/{repo}/deployments"],
     listForAuthenticatedUser: ["GET /user/repos"],
@@ -6092,6 +6801,7 @@ const Endpoints = {
     listPullRequestsAssociatedWithCommit: ["GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls"],
     listReleaseAssets: ["GET /repos/{owner}/{repo}/releases/{release_id}/assets"],
     listReleases: ["GET /repos/{owner}/{repo}/releases"],
+    listTagProtection: ["GET /repos/{owner}/{repo}/tags/protection"],
     listTags: ["GET /repos/{owner}/{repo}/tags"],
     listTeams: ["GET /repos/{owner}/{repo}/teams"],
     listWebhookDeliveries: ["GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries"],
@@ -6115,11 +6825,7 @@ const Endpoints = {
       mapToData: "users"
     }],
     renameBranch: ["POST /repos/{owner}/{repo}/branches/{branch}/rename"],
-    replaceAllTopics: ["PUT /repos/{owner}/{repo}/topics", {
-      mediaType: {
-        previews: ["mercy"]
-      }
-    }],
+    replaceAllTopics: ["PUT /repos/{owner}/{repo}/topics"],
     requestPagesBuild: ["POST /repos/{owner}/{repo}/pages/builds"],
     setAdminBranchProtection: ["POST /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins"],
     setAppAccessRestrictions: ["PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps", {}, {
@@ -6139,6 +6845,7 @@ const Endpoints = {
     update: ["PATCH /repos/{owner}/{repo}"],
     updateBranchProtection: ["PUT /repos/{owner}/{repo}/branches/{branch}/protection"],
     updateCommitComment: ["PATCH /repos/{owner}/{repo}/comments/{comment_id}"],
+    updateDeploymentBranchPolicy: ["PUT /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}"],
     updateInformationAboutPagesSite: ["PUT /repos/{owner}/{repo}/pages"],
     updateInvitation: ["PATCH /repos/{owner}/{repo}/invitations/{invitation_id}"],
     updatePullRequestReviewProtection: ["PATCH /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews"],
@@ -6160,17 +6867,15 @@ const Endpoints = {
     issuesAndPullRequests: ["GET /search/issues"],
     labels: ["GET /search/labels"],
     repos: ["GET /search/repositories"],
-    topics: ["GET /search/topics", {
-      mediaType: {
-        previews: ["mercy"]
-      }
-    }],
+    topics: ["GET /search/topics"],
     users: ["GET /search/users"]
   },
   secretScanning: {
     getAlert: ["GET /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}"],
+    listAlertsForEnterprise: ["GET /enterprises/{enterprise}/secret-scanning/alerts"],
     listAlertsForOrg: ["GET /orgs/{org}/secret-scanning/alerts"],
     listAlertsForRepo: ["GET /repos/{owner}/{repo}/secret-scanning/alerts"],
+    listLocationsForAlert: ["GET /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}/locations"],
     updateAlert: ["PATCH /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}"]
   },
   teams: {
@@ -6222,6 +6927,7 @@ const Endpoints = {
       renamed: ["users", "createPublicSshKeyForAuthenticatedUser"]
     }],
     createPublicSshKeyForAuthenticatedUser: ["POST /user/keys"],
+    createSshSigningKeyForAuthenticatedUser: ["POST /user/ssh_signing_keys"],
     deleteEmailForAuthenticated: ["DELETE /user/emails", {}, {
       renamed: ["users", "deleteEmailForAuthenticatedUser"]
     }],
@@ -6234,6 +6940,7 @@ const Endpoints = {
       renamed: ["users", "deletePublicSshKeyForAuthenticatedUser"]
     }],
     deletePublicSshKeyForAuthenticatedUser: ["DELETE /user/keys/{key_id}"],
+    deleteSshSigningKeyForAuthenticatedUser: ["DELETE /user/ssh_signing_keys/{ssh_signing_key_id}"],
     follow: ["PUT /user/following/{username}"],
     getAuthenticated: ["GET /user"],
     getByUsername: ["GET /users/{username}"],
@@ -6246,6 +6953,7 @@ const Endpoints = {
       renamed: ["users", "getPublicSshKeyForAuthenticatedUser"]
     }],
     getPublicSshKeyForAuthenticatedUser: ["GET /user/keys/{key_id}"],
+    getSshSigningKeyForAuthenticatedUser: ["GET /user/ssh_signing_keys/{ssh_signing_key_id}"],
     list: ["GET /users"],
     listBlockedByAuthenticated: ["GET /user/blocks", {}, {
       renamed: ["users", "listBlockedByAuthenticatedUser"]
@@ -6276,6 +6984,8 @@ const Endpoints = {
       renamed: ["users", "listPublicSshKeysForAuthenticatedUser"]
     }],
     listPublicSshKeysForAuthenticatedUser: ["GET /user/keys"],
+    listSshSigningKeysForAuthenticatedUser: ["GET /user/ssh_signing_keys"],
+    listSshSigningKeysForUser: ["GET /users/{username}/ssh_signing_keys"],
     setPrimaryEmailVisibilityForAuthenticated: ["PATCH /user/email/visibility", {}, {
       renamed: ["users", "setPrimaryEmailVisibilityForAuthenticatedUser"]
     }],
@@ -6286,11 +6996,10 @@ const Endpoints = {
   }
 };
 
-const VERSION = "5.13.0";
+const VERSION = "6.7.0";
 
 function endpointsToMethods(octokit, endpointsMap) {
   const newMethods = {};
-
   for (const [scope, endpoints] of Object.entries(endpointsMap)) {
     for (const [methodName, endpoint] of Object.entries(endpoints)) {
       const [route, defaults, decorations] = endpoint;
@@ -6299,33 +7008,26 @@ function endpointsToMethods(octokit, endpointsMap) {
         method,
         url
       }, defaults);
-
       if (!newMethods[scope]) {
         newMethods[scope] = {};
       }
-
       const scopeMethods = newMethods[scope];
-
       if (decorations) {
         scopeMethods[methodName] = decorate(octokit, scope, methodName, endpointDefaults, decorations);
         continue;
       }
-
       scopeMethods[methodName] = octokit.request.defaults(endpointDefaults);
     }
   }
-
   return newMethods;
 }
-
 function decorate(octokit, scope, methodName, defaults, decorations) {
   const requestWithDefaults = octokit.request.defaults(defaults);
   /* istanbul ignore next */
-
   function withDecorations(...args) {
     // @ts-ignore https://github.com/microsoft/TypeScript/issues/25488
-    let options = requestWithDefaults.endpoint.merge(...args); // There are currently no other decorations than `.mapToData`
-
+    let options = requestWithDefaults.endpoint.merge(...args);
+    // There are currently no other decorations than `.mapToData`
     if (decorations.mapToData) {
       options = Object.assign({}, options, {
         data: options[decorations.mapToData],
@@ -6333,39 +7035,30 @@ function decorate(octokit, scope, methodName, defaults, decorations) {
       });
       return requestWithDefaults(options);
     }
-
     if (decorations.renamed) {
       const [newScope, newMethodName] = decorations.renamed;
       octokit.log.warn(`octokit.${scope}.${methodName}() has been renamed to octokit.${newScope}.${newMethodName}()`);
     }
-
     if (decorations.deprecated) {
       octokit.log.warn(decorations.deprecated);
     }
-
     if (decorations.renamedParameters) {
       // @ts-ignore https://github.com/microsoft/TypeScript/issues/25488
       const options = requestWithDefaults.endpoint.merge(...args);
-
       for (const [name, alias] of Object.entries(decorations.renamedParameters)) {
         if (name in options) {
           octokit.log.warn(`"${name}" parameter is deprecated for "octokit.${scope}.${methodName}()". Use "${alias}" instead`);
-
           if (!(alias in options)) {
             options[alias] = options[name];
           }
-
           delete options[name];
         }
       }
-
       return requestWithDefaults(options);
-    } // @ts-ignore https://github.com/microsoft/TypeScript/issues/25488
-
-
+    }
+    // @ts-ignore https://github.com/microsoft/TypeScript/issues/25488
     return requestWithDefaults(...args);
   }
-
   return Object.assign(withDecorations, requestWithDefaults);
 }
 
@@ -6378,9 +7071,10 @@ function restEndpointMethods(octokit) {
 restEndpointMethods.VERSION = VERSION;
 function legacyRestEndpointMethods(octokit) {
   const api = endpointsToMethods(octokit, Endpoints);
-  return _objectSpread2(_objectSpread2({}, api), {}, {
+  return {
+    ...api,
     rest: api
-  });
+  };
 }
 legacyRestEndpointMethods.VERSION = VERSION;
 
@@ -6654,6 +7348,475 @@ const request = withDefaults(endpoint.endpoint, {
 
 exports.request = request;
 //# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 8390:
+/***/ (function(__unused_webpack_module, exports) {
+
+(function (global, factory) {
+   true ? factory(exports) :
+  0;
+}(this, (function (exports) { 'use strict';
+
+  // AST walker module for Mozilla Parser API compatible trees
+
+  // A simple walk is one where you simply specify callbacks to be
+  // called on specific nodes. The last two arguments are optional. A
+  // simple use would be
+  //
+  //     walk.simple(myTree, {
+  //         Expression: function(node) { ... }
+  //     });
+  //
+  // to do something with all expressions. All Parser API node types
+  // can be used to identify node types, as well as Expression and
+  // Statement, which denote categories of nodes.
+  //
+  // The base argument can be used to pass a custom (recursive)
+  // walker, and state can be used to give this walked an initial
+  // state.
+
+  function simple(node, visitors, baseVisitor, state, override) {
+    if (!baseVisitor) { baseVisitor = base
+    ; }(function c(node, st, override) {
+      var type = override || node.type, found = visitors[type];
+      baseVisitor[type](node, st, c);
+      if (found) { found(node, st); }
+    })(node, state, override);
+  }
+
+  // An ancestor walk keeps an array of ancestor nodes (including the
+  // current node) and passes them to the callback as third parameter
+  // (and also as state parameter when no other state is present).
+  function ancestor(node, visitors, baseVisitor, state, override) {
+    var ancestors = [];
+    if (!baseVisitor) { baseVisitor = base
+    ; }(function c(node, st, override) {
+      var type = override || node.type, found = visitors[type];
+      var isNew = node !== ancestors[ancestors.length - 1];
+      if (isNew) { ancestors.push(node); }
+      baseVisitor[type](node, st, c);
+      if (found) { found(node, st || ancestors, ancestors); }
+      if (isNew) { ancestors.pop(); }
+    })(node, state, override);
+  }
+
+  // A recursive walk is one where your functions override the default
+  // walkers. They can modify and replace the state parameter that's
+  // threaded through the walk, and can opt how and whether to walk
+  // their child nodes (by calling their third argument on these
+  // nodes).
+  function recursive(node, state, funcs, baseVisitor, override) {
+    var visitor = funcs ? make(funcs, baseVisitor || undefined) : baseVisitor
+    ;(function c(node, st, override) {
+      visitor[override || node.type](node, st, c);
+    })(node, state, override);
+  }
+
+  function makeTest(test) {
+    if (typeof test === "string")
+      { return function (type) { return type === test; } }
+    else if (!test)
+      { return function () { return true; } }
+    else
+      { return test }
+  }
+
+  var Found = function Found(node, state) { this.node = node; this.state = state; };
+
+  // A full walk triggers the callback on each node
+  function full(node, callback, baseVisitor, state, override) {
+    if (!baseVisitor) { baseVisitor = base; }
+    var last
+    ;(function c(node, st, override) {
+      var type = override || node.type;
+      baseVisitor[type](node, st, c);
+      if (last !== node) {
+        callback(node, st, type);
+        last = node;
+      }
+    })(node, state, override);
+  }
+
+  // An fullAncestor walk is like an ancestor walk, but triggers
+  // the callback on each node
+  function fullAncestor(node, callback, baseVisitor, state) {
+    if (!baseVisitor) { baseVisitor = base; }
+    var ancestors = [], last
+    ;(function c(node, st, override) {
+      var type = override || node.type;
+      var isNew = node !== ancestors[ancestors.length - 1];
+      if (isNew) { ancestors.push(node); }
+      baseVisitor[type](node, st, c);
+      if (last !== node) {
+        callback(node, st || ancestors, ancestors, type);
+        last = node;
+      }
+      if (isNew) { ancestors.pop(); }
+    })(node, state);
+  }
+
+  // Find a node with a given start, end, and type (all are optional,
+  // null can be used as wildcard). Returns a {node, state} object, or
+  // undefined when it doesn't find a matching node.
+  function findNodeAt(node, start, end, test, baseVisitor, state) {
+    if (!baseVisitor) { baseVisitor = base; }
+    test = makeTest(test);
+    try {
+      (function c(node, st, override) {
+        var type = override || node.type;
+        if ((start == null || node.start <= start) &&
+            (end == null || node.end >= end))
+          { baseVisitor[type](node, st, c); }
+        if ((start == null || node.start === start) &&
+            (end == null || node.end === end) &&
+            test(type, node))
+          { throw new Found(node, st) }
+      })(node, state);
+    } catch (e) {
+      if (e instanceof Found) { return e }
+      throw e
+    }
+  }
+
+  // Find the innermost node of a given type that contains the given
+  // position. Interface similar to findNodeAt.
+  function findNodeAround(node, pos, test, baseVisitor, state) {
+    test = makeTest(test);
+    if (!baseVisitor) { baseVisitor = base; }
+    try {
+      (function c(node, st, override) {
+        var type = override || node.type;
+        if (node.start > pos || node.end < pos) { return }
+        baseVisitor[type](node, st, c);
+        if (test(type, node)) { throw new Found(node, st) }
+      })(node, state);
+    } catch (e) {
+      if (e instanceof Found) { return e }
+      throw e
+    }
+  }
+
+  // Find the outermost matching node after a given position.
+  function findNodeAfter(node, pos, test, baseVisitor, state) {
+    test = makeTest(test);
+    if (!baseVisitor) { baseVisitor = base; }
+    try {
+      (function c(node, st, override) {
+        if (node.end < pos) { return }
+        var type = override || node.type;
+        if (node.start >= pos && test(type, node)) { throw new Found(node, st) }
+        baseVisitor[type](node, st, c);
+      })(node, state);
+    } catch (e) {
+      if (e instanceof Found) { return e }
+      throw e
+    }
+  }
+
+  // Find the outermost matching node before a given position.
+  function findNodeBefore(node, pos, test, baseVisitor, state) {
+    test = makeTest(test);
+    if (!baseVisitor) { baseVisitor = base; }
+    var max
+    ;(function c(node, st, override) {
+      if (node.start > pos) { return }
+      var type = override || node.type;
+      if (node.end <= pos && (!max || max.node.end < node.end) && test(type, node))
+        { max = new Found(node, st); }
+      baseVisitor[type](node, st, c);
+    })(node, state);
+    return max
+  }
+
+  // Used to create a custom walker. Will fill in all missing node
+  // type properties with the defaults.
+  function make(funcs, baseVisitor) {
+    var visitor = Object.create(baseVisitor || base);
+    for (var type in funcs) { visitor[type] = funcs[type]; }
+    return visitor
+  }
+
+  function skipThrough(node, st, c) { c(node, st); }
+  function ignore(_node, _st, _c) {}
+
+  // Node walkers.
+
+  var base = {};
+
+  base.Program = base.BlockStatement = base.StaticBlock = function (node, st, c) {
+    for (var i = 0, list = node.body; i < list.length; i += 1)
+      {
+      var stmt = list[i];
+
+      c(stmt, st, "Statement");
+    }
+  };
+  base.Statement = skipThrough;
+  base.EmptyStatement = ignore;
+  base.ExpressionStatement = base.ParenthesizedExpression = base.ChainExpression =
+    function (node, st, c) { return c(node.expression, st, "Expression"); };
+  base.IfStatement = function (node, st, c) {
+    c(node.test, st, "Expression");
+    c(node.consequent, st, "Statement");
+    if (node.alternate) { c(node.alternate, st, "Statement"); }
+  };
+  base.LabeledStatement = function (node, st, c) { return c(node.body, st, "Statement"); };
+  base.BreakStatement = base.ContinueStatement = ignore;
+  base.WithStatement = function (node, st, c) {
+    c(node.object, st, "Expression");
+    c(node.body, st, "Statement");
+  };
+  base.SwitchStatement = function (node, st, c) {
+    c(node.discriminant, st, "Expression");
+    for (var i$1 = 0, list$1 = node.cases; i$1 < list$1.length; i$1 += 1) {
+      var cs = list$1[i$1];
+
+      if (cs.test) { c(cs.test, st, "Expression"); }
+      for (var i = 0, list = cs.consequent; i < list.length; i += 1)
+        {
+        var cons = list[i];
+
+        c(cons, st, "Statement");
+      }
+    }
+  };
+  base.SwitchCase = function (node, st, c) {
+    if (node.test) { c(node.test, st, "Expression"); }
+    for (var i = 0, list = node.consequent; i < list.length; i += 1)
+      {
+      var cons = list[i];
+
+      c(cons, st, "Statement");
+    }
+  };
+  base.ReturnStatement = base.YieldExpression = base.AwaitExpression = function (node, st, c) {
+    if (node.argument) { c(node.argument, st, "Expression"); }
+  };
+  base.ThrowStatement = base.SpreadElement =
+    function (node, st, c) { return c(node.argument, st, "Expression"); };
+  base.TryStatement = function (node, st, c) {
+    c(node.block, st, "Statement");
+    if (node.handler) { c(node.handler, st); }
+    if (node.finalizer) { c(node.finalizer, st, "Statement"); }
+  };
+  base.CatchClause = function (node, st, c) {
+    if (node.param) { c(node.param, st, "Pattern"); }
+    c(node.body, st, "Statement");
+  };
+  base.WhileStatement = base.DoWhileStatement = function (node, st, c) {
+    c(node.test, st, "Expression");
+    c(node.body, st, "Statement");
+  };
+  base.ForStatement = function (node, st, c) {
+    if (node.init) { c(node.init, st, "ForInit"); }
+    if (node.test) { c(node.test, st, "Expression"); }
+    if (node.update) { c(node.update, st, "Expression"); }
+    c(node.body, st, "Statement");
+  };
+  base.ForInStatement = base.ForOfStatement = function (node, st, c) {
+    c(node.left, st, "ForInit");
+    c(node.right, st, "Expression");
+    c(node.body, st, "Statement");
+  };
+  base.ForInit = function (node, st, c) {
+    if (node.type === "VariableDeclaration") { c(node, st); }
+    else { c(node, st, "Expression"); }
+  };
+  base.DebuggerStatement = ignore;
+
+  base.FunctionDeclaration = function (node, st, c) { return c(node, st, "Function"); };
+  base.VariableDeclaration = function (node, st, c) {
+    for (var i = 0, list = node.declarations; i < list.length; i += 1)
+      {
+      var decl = list[i];
+
+      c(decl, st);
+    }
+  };
+  base.VariableDeclarator = function (node, st, c) {
+    c(node.id, st, "Pattern");
+    if (node.init) { c(node.init, st, "Expression"); }
+  };
+
+  base.Function = function (node, st, c) {
+    if (node.id) { c(node.id, st, "Pattern"); }
+    for (var i = 0, list = node.params; i < list.length; i += 1)
+      {
+      var param = list[i];
+
+      c(param, st, "Pattern");
+    }
+    c(node.body, st, node.expression ? "Expression" : "Statement");
+  };
+
+  base.Pattern = function (node, st, c) {
+    if (node.type === "Identifier")
+      { c(node, st, "VariablePattern"); }
+    else if (node.type === "MemberExpression")
+      { c(node, st, "MemberPattern"); }
+    else
+      { c(node, st); }
+  };
+  base.VariablePattern = ignore;
+  base.MemberPattern = skipThrough;
+  base.RestElement = function (node, st, c) { return c(node.argument, st, "Pattern"); };
+  base.ArrayPattern = function (node, st, c) {
+    for (var i = 0, list = node.elements; i < list.length; i += 1) {
+      var elt = list[i];
+
+      if (elt) { c(elt, st, "Pattern"); }
+    }
+  };
+  base.ObjectPattern = function (node, st, c) {
+    for (var i = 0, list = node.properties; i < list.length; i += 1) {
+      var prop = list[i];
+
+      if (prop.type === "Property") {
+        if (prop.computed) { c(prop.key, st, "Expression"); }
+        c(prop.value, st, "Pattern");
+      } else if (prop.type === "RestElement") {
+        c(prop.argument, st, "Pattern");
+      }
+    }
+  };
+
+  base.Expression = skipThrough;
+  base.ThisExpression = base.Super = base.MetaProperty = ignore;
+  base.ArrayExpression = function (node, st, c) {
+    for (var i = 0, list = node.elements; i < list.length; i += 1) {
+      var elt = list[i];
+
+      if (elt) { c(elt, st, "Expression"); }
+    }
+  };
+  base.ObjectExpression = function (node, st, c) {
+    for (var i = 0, list = node.properties; i < list.length; i += 1)
+      {
+      var prop = list[i];
+
+      c(prop, st);
+    }
+  };
+  base.FunctionExpression = base.ArrowFunctionExpression = base.FunctionDeclaration;
+  base.SequenceExpression = function (node, st, c) {
+    for (var i = 0, list = node.expressions; i < list.length; i += 1)
+      {
+      var expr = list[i];
+
+      c(expr, st, "Expression");
+    }
+  };
+  base.TemplateLiteral = function (node, st, c) {
+    for (var i = 0, list = node.quasis; i < list.length; i += 1)
+      {
+      var quasi = list[i];
+
+      c(quasi, st);
+    }
+
+    for (var i$1 = 0, list$1 = node.expressions; i$1 < list$1.length; i$1 += 1)
+      {
+      var expr = list$1[i$1];
+
+      c(expr, st, "Expression");
+    }
+  };
+  base.TemplateElement = ignore;
+  base.UnaryExpression = base.UpdateExpression = function (node, st, c) {
+    c(node.argument, st, "Expression");
+  };
+  base.BinaryExpression = base.LogicalExpression = function (node, st, c) {
+    c(node.left, st, "Expression");
+    c(node.right, st, "Expression");
+  };
+  base.AssignmentExpression = base.AssignmentPattern = function (node, st, c) {
+    c(node.left, st, "Pattern");
+    c(node.right, st, "Expression");
+  };
+  base.ConditionalExpression = function (node, st, c) {
+    c(node.test, st, "Expression");
+    c(node.consequent, st, "Expression");
+    c(node.alternate, st, "Expression");
+  };
+  base.NewExpression = base.CallExpression = function (node, st, c) {
+    c(node.callee, st, "Expression");
+    if (node.arguments)
+      { for (var i = 0, list = node.arguments; i < list.length; i += 1)
+        {
+          var arg = list[i];
+
+          c(arg, st, "Expression");
+        } }
+  };
+  base.MemberExpression = function (node, st, c) {
+    c(node.object, st, "Expression");
+    if (node.computed) { c(node.property, st, "Expression"); }
+  };
+  base.ExportNamedDeclaration = base.ExportDefaultDeclaration = function (node, st, c) {
+    if (node.declaration)
+      { c(node.declaration, st, node.type === "ExportNamedDeclaration" || node.declaration.id ? "Statement" : "Expression"); }
+    if (node.source) { c(node.source, st, "Expression"); }
+  };
+  base.ExportAllDeclaration = function (node, st, c) {
+    if (node.exported)
+      { c(node.exported, st); }
+    c(node.source, st, "Expression");
+  };
+  base.ImportDeclaration = function (node, st, c) {
+    for (var i = 0, list = node.specifiers; i < list.length; i += 1)
+      {
+      var spec = list[i];
+
+      c(spec, st);
+    }
+    c(node.source, st, "Expression");
+  };
+  base.ImportExpression = function (node, st, c) {
+    c(node.source, st, "Expression");
+  };
+  base.ImportSpecifier = base.ImportDefaultSpecifier = base.ImportNamespaceSpecifier = base.Identifier = base.PrivateIdentifier = base.Literal = ignore;
+
+  base.TaggedTemplateExpression = function (node, st, c) {
+    c(node.tag, st, "Expression");
+    c(node.quasi, st, "Expression");
+  };
+  base.ClassDeclaration = base.ClassExpression = function (node, st, c) { return c(node, st, "Class"); };
+  base.Class = function (node, st, c) {
+    if (node.id) { c(node.id, st, "Pattern"); }
+    if (node.superClass) { c(node.superClass, st, "Expression"); }
+    c(node.body, st);
+  };
+  base.ClassBody = function (node, st, c) {
+    for (var i = 0, list = node.body; i < list.length; i += 1)
+      {
+      var elt = list[i];
+
+      c(elt, st);
+    }
+  };
+  base.MethodDefinition = base.PropertyDefinition = base.Property = function (node, st, c) {
+    if (node.computed) { c(node.key, st, "Expression"); }
+    if (node.value) { c(node.value, st, "Expression"); }
+  };
+
+  exports.ancestor = ancestor;
+  exports.base = base;
+  exports.findNodeAfter = findNodeAfter;
+  exports.findNodeAround = findNodeAround;
+  exports.findNodeAt = findNodeAt;
+  exports.findNodeBefore = findNodeBefore;
+  exports.full = full;
+  exports.fullAncestor = fullAncestor;
+  exports.make = make;
+  exports.recursive = recursive;
+  exports.simple = simple;
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
+})));
 
 
 /***/ }),
@@ -12189,7 +13352,7 @@ exports.request = request;
 
   // Acorn is a tiny, fast JavaScript parser written in JavaScript.
 
-  var version = "8.8.0";
+  var version = "8.8.1";
 
   Parser.acorn = {
     Parser: Parser,
@@ -18175,7 +19338,7 @@ function setup(env) {
 			namespaces = split[i].replace(/\*/g, '.*?');
 
 			if (namespaces[0] === '-') {
-				createDebug.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+				createDebug.skips.push(new RegExp('^' + namespaces.slice(1) + '$'));
 			} else {
 				createDebug.names.push(new RegExp('^' + namespaces + '$'));
 			}
@@ -35542,13 +36705,10 @@ class HttpsProxyAgent extends agent_base_1.Agent {
             if (statusCode === 200) {
                 req.once('socket', resume);
                 if (opts.secureEndpoint) {
-                    const servername = opts.servername || opts.host;
-                    if (!servername) {
-                        throw new Error('Could not determine "servername"');
-                    }
                     // The proxy is connecting to a TLS server, so upgrade
                     // this socket connection to a TLS connection.
                     debug('Upgrading socket connection to TLS');
+                    const servername = opts.servername || opts.host;
                     return tls_1.default.connect(Object.assign(Object.assign({}, omit(opts, 'host', 'hostname', 'path', 'port')), { socket,
                         servername }));
                 }
@@ -35565,7 +36725,7 @@ class HttpsProxyAgent extends agent_base_1.Agent {
             //
             // See: https://hackerone.com/reports/541502
             socket.destroy();
-            const fakeSocket = new net_1.default.Socket();
+            const fakeSocket = new net_1.default.Socket({ writable: false });
             fakeSocket.readable = true;
             // Need to wait for the "socket" event to re-play the "data" events.
             req.once('socket', (s) => {
@@ -46469,7 +47629,7 @@ util.inherits = __nccwpck_require__(4124);
 /*</replacement>*/
 
 var Readable = __nccwpck_require__(1433);
-var Writable = __nccwpck_require__(6993);
+var Writable = __nccwpck_require__(2094);
 
 util.inherits(Duplex, Readable);
 
@@ -47746,7 +48906,7 @@ function done(stream, er) {
 
 /***/ }),
 
-/***/ 6993:
+/***/ 2094:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -48236,7 +49396,7 @@ function endWritable(stream, state, cb) {
 exports = module.exports = __nccwpck_require__(1433);
 exports.Stream = __nccwpck_require__(2781);
 exports.Readable = exports;
-exports.Writable = __nccwpck_require__(6993);
+exports.Writable = __nccwpck_require__(2094);
 exports.Duplex = __nccwpck_require__(1359);
 exports.Transform = __nccwpck_require__(4415);
 exports.PassThrough = __nccwpck_require__(1542);
@@ -55691,6 +56851,24 @@ function unpipe(stream) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
+Object.defineProperty(exports, "NIL", ({
+  enumerable: true,
+  get: function () {
+    return _nil.default;
+  }
+}));
+Object.defineProperty(exports, "parse", ({
+  enumerable: true,
+  get: function () {
+    return _parse.default;
+  }
+}));
+Object.defineProperty(exports, "stringify", ({
+  enumerable: true,
+  get: function () {
+    return _stringify.default;
+  }
+}));
 Object.defineProperty(exports, "v1", ({
   enumerable: true,
   get: function () {
@@ -55715,34 +56893,16 @@ Object.defineProperty(exports, "v5", ({
     return _v4.default;
   }
 }));
-Object.defineProperty(exports, "NIL", ({
-  enumerable: true,
-  get: function () {
-    return _nil.default;
-  }
-}));
-Object.defineProperty(exports, "version", ({
-  enumerable: true,
-  get: function () {
-    return _version.default;
-  }
-}));
 Object.defineProperty(exports, "validate", ({
   enumerable: true,
   get: function () {
     return _validate.default;
   }
 }));
-Object.defineProperty(exports, "stringify", ({
+Object.defineProperty(exports, "version", ({
   enumerable: true,
   get: function () {
-    return _stringify.default;
-  }
-}));
-Object.defineProperty(exports, "parse", ({
-  enumerable: true,
-  get: function () {
-    return _parse.default;
+    return _version.default;
   }
 }));
 
@@ -55756,7 +56916,7 @@ var _v4 = _interopRequireDefault(__nccwpck_require__(9120));
 
 var _nil = _interopRequireDefault(__nccwpck_require__(5332));
 
-var _version = _interopRequireDefault(__nccwpck_require__(1595));
+var _version = _interopRequireDefault(__nccwpck_require__(2414));
 
 var _validate = _interopRequireDefault(__nccwpck_require__(6900));
 
@@ -55794,6 +56954,28 @@ function md5(bytes) {
 }
 
 var _default = md5;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ 2054:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _crypto = _interopRequireDefault(__nccwpck_require__(6113));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = {
+  randomUUID: _crypto.default.randomUUID
+};
 exports["default"] = _default;
 
 /***/ }),
@@ -55951,6 +57133,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
+exports.unsafeStringify = unsafeStringify;
 
 var _validate = _interopRequireDefault(__nccwpck_require__(6900));
 
@@ -55963,13 +57146,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const byteToHex = [];
 
 for (let i = 0; i < 256; ++i) {
-  byteToHex.push((i + 0x100).toString(16).substr(1));
+  byteToHex.push((i + 0x100).toString(16).slice(1));
+}
+
+function unsafeStringify(arr, offset = 0) {
+  // Note: Be careful editing this code!  It's been tuned for performance
+  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
+  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
 }
 
 function stringify(arr, offset = 0) {
-  // Note: Be careful editing this code!  It's been tuned for performance
-  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
-  const uuid = (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase(); // Consistency check for valid UUID.  If this throws, it's likely due to one
+  const uuid = unsafeStringify(arr, offset); // Consistency check for valid UUID.  If this throws, it's likely due to one
   // of the following:
   // - One or more input array values don't map to a hex octet (leading to
   // "undefined" in the uuid)
@@ -56000,7 +57187,7 @@ exports["default"] = void 0;
 
 var _rng = _interopRequireDefault(__nccwpck_require__(807));
 
-var _stringify = _interopRequireDefault(__nccwpck_require__(8950));
+var _stringify = __nccwpck_require__(8950);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -56093,7 +57280,7 @@ function v1(options, buf, offset) {
     b[i + n] = node[n];
   }
 
-  return buf || (0, _stringify.default)(b);
+  return buf || (0, _stringify.unsafeStringify)(b);
 }
 
 var _default = v1;
@@ -56133,10 +57320,10 @@ exports["default"] = _default;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports["default"] = _default;
 exports.URL = exports.DNS = void 0;
+exports["default"] = v35;
 
-var _stringify = _interopRequireDefault(__nccwpck_require__(8950));
+var _stringify = __nccwpck_require__(8950);
 
 var _parse = _interopRequireDefault(__nccwpck_require__(2746));
 
@@ -56159,8 +57346,10 @@ exports.DNS = DNS;
 const URL = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
 exports.URL = URL;
 
-function _default(name, version, hashfunc) {
+function v35(name, version, hashfunc) {
   function generateUUID(value, namespace, buf, offset) {
+    var _namespace;
+
     if (typeof value === 'string') {
       value = stringToBytes(value);
     }
@@ -56169,7 +57358,7 @@ function _default(name, version, hashfunc) {
       namespace = (0, _parse.default)(namespace);
     }
 
-    if (namespace.length !== 16) {
+    if (((_namespace = namespace) === null || _namespace === void 0 ? void 0 : _namespace.length) !== 16) {
       throw TypeError('Namespace must be array-like (16 iterable integer values, 0-255)');
     } // Compute hash of namespace and value, Per 4.3
     // Future: Use spread syntax when supported on all platforms, e.g. `bytes =
@@ -56193,7 +57382,7 @@ function _default(name, version, hashfunc) {
       return buf;
     }
 
-    return (0, _stringify.default)(bytes);
+    return (0, _stringify.unsafeStringify)(bytes);
   } // Function#name is not settable on some platforms (#270)
 
 
@@ -56220,13 +57409,19 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 
+var _native = _interopRequireDefault(__nccwpck_require__(2054));
+
 var _rng = _interopRequireDefault(__nccwpck_require__(807));
 
-var _stringify = _interopRequireDefault(__nccwpck_require__(8950));
+var _stringify = __nccwpck_require__(8950);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function v4(options, buf, offset) {
+  if (_native.default.randomUUID && !buf && !options) {
+    return _native.default.randomUUID();
+  }
+
   options = options || {};
 
   const rnds = options.random || (options.rng || _rng.default)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
@@ -56245,7 +57440,7 @@ function v4(options, buf, offset) {
     return buf;
   }
 
-  return (0, _stringify.default)(rnds);
+  return (0, _stringify.unsafeStringify)(rnds);
 }
 
 var _default = v4;
@@ -56300,7 +57495,7 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ 1595:
+/***/ 2414:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -56320,7 +57515,7 @@ function version(uuid) {
     throw TypeError('Invalid UUID');
   }
 
-  return parseInt(uuid.substr(14, 1), 16);
+  return parseInt(uuid.slice(14, 15), 16);
 }
 
 var _default = version;
@@ -59633,7 +60828,7 @@ exports.VMScript = VMScript;
 
 
 const {Parser: AcornParser, isNewLine: acornIsNewLine, getLineInfo: acornGetLineInfo} = __nccwpck_require__(390);
-const {full: acornWalkFull} = __nccwpck_require__(5000);
+const {full: acornWalkFull} = __nccwpck_require__(8390);
 
 const INTERNAL_STATE_NAME = 'VM2_INTERNAL_STATE_DO_NOT_USE_OR_PROGRAM_WILL_FAIL';
 
@@ -60358,475 +61553,6 @@ class VM extends EventEmitter {
 }
 
 exports.VM = VM;
-
-
-/***/ }),
-
-/***/ 5000:
-/***/ (function(__unused_webpack_module, exports) {
-
-(function (global, factory) {
-   true ? factory(exports) :
-  0;
-}(this, (function (exports) { 'use strict';
-
-  // AST walker module for Mozilla Parser API compatible trees
-
-  // A simple walk is one where you simply specify callbacks to be
-  // called on specific nodes. The last two arguments are optional. A
-  // simple use would be
-  //
-  //     walk.simple(myTree, {
-  //         Expression: function(node) { ... }
-  //     });
-  //
-  // to do something with all expressions. All Parser API node types
-  // can be used to identify node types, as well as Expression and
-  // Statement, which denote categories of nodes.
-  //
-  // The base argument can be used to pass a custom (recursive)
-  // walker, and state can be used to give this walked an initial
-  // state.
-
-  function simple(node, visitors, baseVisitor, state, override) {
-    if (!baseVisitor) { baseVisitor = base
-    ; }(function c(node, st, override) {
-      var type = override || node.type, found = visitors[type];
-      baseVisitor[type](node, st, c);
-      if (found) { found(node, st); }
-    })(node, state, override);
-  }
-
-  // An ancestor walk keeps an array of ancestor nodes (including the
-  // current node) and passes them to the callback as third parameter
-  // (and also as state parameter when no other state is present).
-  function ancestor(node, visitors, baseVisitor, state, override) {
-    var ancestors = [];
-    if (!baseVisitor) { baseVisitor = base
-    ; }(function c(node, st, override) {
-      var type = override || node.type, found = visitors[type];
-      var isNew = node !== ancestors[ancestors.length - 1];
-      if (isNew) { ancestors.push(node); }
-      baseVisitor[type](node, st, c);
-      if (found) { found(node, st || ancestors, ancestors); }
-      if (isNew) { ancestors.pop(); }
-    })(node, state, override);
-  }
-
-  // A recursive walk is one where your functions override the default
-  // walkers. They can modify and replace the state parameter that's
-  // threaded through the walk, and can opt how and whether to walk
-  // their child nodes (by calling their third argument on these
-  // nodes).
-  function recursive(node, state, funcs, baseVisitor, override) {
-    var visitor = funcs ? make(funcs, baseVisitor || undefined) : baseVisitor
-    ;(function c(node, st, override) {
-      visitor[override || node.type](node, st, c);
-    })(node, state, override);
-  }
-
-  function makeTest(test) {
-    if (typeof test === "string")
-      { return function (type) { return type === test; } }
-    else if (!test)
-      { return function () { return true; } }
-    else
-      { return test }
-  }
-
-  var Found = function Found(node, state) { this.node = node; this.state = state; };
-
-  // A full walk triggers the callback on each node
-  function full(node, callback, baseVisitor, state, override) {
-    if (!baseVisitor) { baseVisitor = base; }
-    var last
-    ;(function c(node, st, override) {
-      var type = override || node.type;
-      baseVisitor[type](node, st, c);
-      if (last !== node) {
-        callback(node, st, type);
-        last = node;
-      }
-    })(node, state, override);
-  }
-
-  // An fullAncestor walk is like an ancestor walk, but triggers
-  // the callback on each node
-  function fullAncestor(node, callback, baseVisitor, state) {
-    if (!baseVisitor) { baseVisitor = base; }
-    var ancestors = [], last
-    ;(function c(node, st, override) {
-      var type = override || node.type;
-      var isNew = node !== ancestors[ancestors.length - 1];
-      if (isNew) { ancestors.push(node); }
-      baseVisitor[type](node, st, c);
-      if (last !== node) {
-        callback(node, st || ancestors, ancestors, type);
-        last = node;
-      }
-      if (isNew) { ancestors.pop(); }
-    })(node, state);
-  }
-
-  // Find a node with a given start, end, and type (all are optional,
-  // null can be used as wildcard). Returns a {node, state} object, or
-  // undefined when it doesn't find a matching node.
-  function findNodeAt(node, start, end, test, baseVisitor, state) {
-    if (!baseVisitor) { baseVisitor = base; }
-    test = makeTest(test);
-    try {
-      (function c(node, st, override) {
-        var type = override || node.type;
-        if ((start == null || node.start <= start) &&
-            (end == null || node.end >= end))
-          { baseVisitor[type](node, st, c); }
-        if ((start == null || node.start === start) &&
-            (end == null || node.end === end) &&
-            test(type, node))
-          { throw new Found(node, st) }
-      })(node, state);
-    } catch (e) {
-      if (e instanceof Found) { return e }
-      throw e
-    }
-  }
-
-  // Find the innermost node of a given type that contains the given
-  // position. Interface similar to findNodeAt.
-  function findNodeAround(node, pos, test, baseVisitor, state) {
-    test = makeTest(test);
-    if (!baseVisitor) { baseVisitor = base; }
-    try {
-      (function c(node, st, override) {
-        var type = override || node.type;
-        if (node.start > pos || node.end < pos) { return }
-        baseVisitor[type](node, st, c);
-        if (test(type, node)) { throw new Found(node, st) }
-      })(node, state);
-    } catch (e) {
-      if (e instanceof Found) { return e }
-      throw e
-    }
-  }
-
-  // Find the outermost matching node after a given position.
-  function findNodeAfter(node, pos, test, baseVisitor, state) {
-    test = makeTest(test);
-    if (!baseVisitor) { baseVisitor = base; }
-    try {
-      (function c(node, st, override) {
-        if (node.end < pos) { return }
-        var type = override || node.type;
-        if (node.start >= pos && test(type, node)) { throw new Found(node, st) }
-        baseVisitor[type](node, st, c);
-      })(node, state);
-    } catch (e) {
-      if (e instanceof Found) { return e }
-      throw e
-    }
-  }
-
-  // Find the outermost matching node before a given position.
-  function findNodeBefore(node, pos, test, baseVisitor, state) {
-    test = makeTest(test);
-    if (!baseVisitor) { baseVisitor = base; }
-    var max
-    ;(function c(node, st, override) {
-      if (node.start > pos) { return }
-      var type = override || node.type;
-      if (node.end <= pos && (!max || max.node.end < node.end) && test(type, node))
-        { max = new Found(node, st); }
-      baseVisitor[type](node, st, c);
-    })(node, state);
-    return max
-  }
-
-  // Used to create a custom walker. Will fill in all missing node
-  // type properties with the defaults.
-  function make(funcs, baseVisitor) {
-    var visitor = Object.create(baseVisitor || base);
-    for (var type in funcs) { visitor[type] = funcs[type]; }
-    return visitor
-  }
-
-  function skipThrough(node, st, c) { c(node, st); }
-  function ignore(_node, _st, _c) {}
-
-  // Node walkers.
-
-  var base = {};
-
-  base.Program = base.BlockStatement = base.StaticBlock = function (node, st, c) {
-    for (var i = 0, list = node.body; i < list.length; i += 1)
-      {
-      var stmt = list[i];
-
-      c(stmt, st, "Statement");
-    }
-  };
-  base.Statement = skipThrough;
-  base.EmptyStatement = ignore;
-  base.ExpressionStatement = base.ParenthesizedExpression = base.ChainExpression =
-    function (node, st, c) { return c(node.expression, st, "Expression"); };
-  base.IfStatement = function (node, st, c) {
-    c(node.test, st, "Expression");
-    c(node.consequent, st, "Statement");
-    if (node.alternate) { c(node.alternate, st, "Statement"); }
-  };
-  base.LabeledStatement = function (node, st, c) { return c(node.body, st, "Statement"); };
-  base.BreakStatement = base.ContinueStatement = ignore;
-  base.WithStatement = function (node, st, c) {
-    c(node.object, st, "Expression");
-    c(node.body, st, "Statement");
-  };
-  base.SwitchStatement = function (node, st, c) {
-    c(node.discriminant, st, "Expression");
-    for (var i$1 = 0, list$1 = node.cases; i$1 < list$1.length; i$1 += 1) {
-      var cs = list$1[i$1];
-
-      if (cs.test) { c(cs.test, st, "Expression"); }
-      for (var i = 0, list = cs.consequent; i < list.length; i += 1)
-        {
-        var cons = list[i];
-
-        c(cons, st, "Statement");
-      }
-    }
-  };
-  base.SwitchCase = function (node, st, c) {
-    if (node.test) { c(node.test, st, "Expression"); }
-    for (var i = 0, list = node.consequent; i < list.length; i += 1)
-      {
-      var cons = list[i];
-
-      c(cons, st, "Statement");
-    }
-  };
-  base.ReturnStatement = base.YieldExpression = base.AwaitExpression = function (node, st, c) {
-    if (node.argument) { c(node.argument, st, "Expression"); }
-  };
-  base.ThrowStatement = base.SpreadElement =
-    function (node, st, c) { return c(node.argument, st, "Expression"); };
-  base.TryStatement = function (node, st, c) {
-    c(node.block, st, "Statement");
-    if (node.handler) { c(node.handler, st); }
-    if (node.finalizer) { c(node.finalizer, st, "Statement"); }
-  };
-  base.CatchClause = function (node, st, c) {
-    if (node.param) { c(node.param, st, "Pattern"); }
-    c(node.body, st, "Statement");
-  };
-  base.WhileStatement = base.DoWhileStatement = function (node, st, c) {
-    c(node.test, st, "Expression");
-    c(node.body, st, "Statement");
-  };
-  base.ForStatement = function (node, st, c) {
-    if (node.init) { c(node.init, st, "ForInit"); }
-    if (node.test) { c(node.test, st, "Expression"); }
-    if (node.update) { c(node.update, st, "Expression"); }
-    c(node.body, st, "Statement");
-  };
-  base.ForInStatement = base.ForOfStatement = function (node, st, c) {
-    c(node.left, st, "ForInit");
-    c(node.right, st, "Expression");
-    c(node.body, st, "Statement");
-  };
-  base.ForInit = function (node, st, c) {
-    if (node.type === "VariableDeclaration") { c(node, st); }
-    else { c(node, st, "Expression"); }
-  };
-  base.DebuggerStatement = ignore;
-
-  base.FunctionDeclaration = function (node, st, c) { return c(node, st, "Function"); };
-  base.VariableDeclaration = function (node, st, c) {
-    for (var i = 0, list = node.declarations; i < list.length; i += 1)
-      {
-      var decl = list[i];
-
-      c(decl, st);
-    }
-  };
-  base.VariableDeclarator = function (node, st, c) {
-    c(node.id, st, "Pattern");
-    if (node.init) { c(node.init, st, "Expression"); }
-  };
-
-  base.Function = function (node, st, c) {
-    if (node.id) { c(node.id, st, "Pattern"); }
-    for (var i = 0, list = node.params; i < list.length; i += 1)
-      {
-      var param = list[i];
-
-      c(param, st, "Pattern");
-    }
-    c(node.body, st, node.expression ? "Expression" : "Statement");
-  };
-
-  base.Pattern = function (node, st, c) {
-    if (node.type === "Identifier")
-      { c(node, st, "VariablePattern"); }
-    else if (node.type === "MemberExpression")
-      { c(node, st, "MemberPattern"); }
-    else
-      { c(node, st); }
-  };
-  base.VariablePattern = ignore;
-  base.MemberPattern = skipThrough;
-  base.RestElement = function (node, st, c) { return c(node.argument, st, "Pattern"); };
-  base.ArrayPattern = function (node, st, c) {
-    for (var i = 0, list = node.elements; i < list.length; i += 1) {
-      var elt = list[i];
-
-      if (elt) { c(elt, st, "Pattern"); }
-    }
-  };
-  base.ObjectPattern = function (node, st, c) {
-    for (var i = 0, list = node.properties; i < list.length; i += 1) {
-      var prop = list[i];
-
-      if (prop.type === "Property") {
-        if (prop.computed) { c(prop.key, st, "Expression"); }
-        c(prop.value, st, "Pattern");
-      } else if (prop.type === "RestElement") {
-        c(prop.argument, st, "Pattern");
-      }
-    }
-  };
-
-  base.Expression = skipThrough;
-  base.ThisExpression = base.Super = base.MetaProperty = ignore;
-  base.ArrayExpression = function (node, st, c) {
-    for (var i = 0, list = node.elements; i < list.length; i += 1) {
-      var elt = list[i];
-
-      if (elt) { c(elt, st, "Expression"); }
-    }
-  };
-  base.ObjectExpression = function (node, st, c) {
-    for (var i = 0, list = node.properties; i < list.length; i += 1)
-      {
-      var prop = list[i];
-
-      c(prop, st);
-    }
-  };
-  base.FunctionExpression = base.ArrowFunctionExpression = base.FunctionDeclaration;
-  base.SequenceExpression = function (node, st, c) {
-    for (var i = 0, list = node.expressions; i < list.length; i += 1)
-      {
-      var expr = list[i];
-
-      c(expr, st, "Expression");
-    }
-  };
-  base.TemplateLiteral = function (node, st, c) {
-    for (var i = 0, list = node.quasis; i < list.length; i += 1)
-      {
-      var quasi = list[i];
-
-      c(quasi, st);
-    }
-
-    for (var i$1 = 0, list$1 = node.expressions; i$1 < list$1.length; i$1 += 1)
-      {
-      var expr = list$1[i$1];
-
-      c(expr, st, "Expression");
-    }
-  };
-  base.TemplateElement = ignore;
-  base.UnaryExpression = base.UpdateExpression = function (node, st, c) {
-    c(node.argument, st, "Expression");
-  };
-  base.BinaryExpression = base.LogicalExpression = function (node, st, c) {
-    c(node.left, st, "Expression");
-    c(node.right, st, "Expression");
-  };
-  base.AssignmentExpression = base.AssignmentPattern = function (node, st, c) {
-    c(node.left, st, "Pattern");
-    c(node.right, st, "Expression");
-  };
-  base.ConditionalExpression = function (node, st, c) {
-    c(node.test, st, "Expression");
-    c(node.consequent, st, "Expression");
-    c(node.alternate, st, "Expression");
-  };
-  base.NewExpression = base.CallExpression = function (node, st, c) {
-    c(node.callee, st, "Expression");
-    if (node.arguments)
-      { for (var i = 0, list = node.arguments; i < list.length; i += 1)
-        {
-          var arg = list[i];
-
-          c(arg, st, "Expression");
-        } }
-  };
-  base.MemberExpression = function (node, st, c) {
-    c(node.object, st, "Expression");
-    if (node.computed) { c(node.property, st, "Expression"); }
-  };
-  base.ExportNamedDeclaration = base.ExportDefaultDeclaration = function (node, st, c) {
-    if (node.declaration)
-      { c(node.declaration, st, node.type === "ExportNamedDeclaration" || node.declaration.id ? "Statement" : "Expression"); }
-    if (node.source) { c(node.source, st, "Expression"); }
-  };
-  base.ExportAllDeclaration = function (node, st, c) {
-    if (node.exported)
-      { c(node.exported, st); }
-    c(node.source, st, "Expression");
-  };
-  base.ImportDeclaration = function (node, st, c) {
-    for (var i = 0, list = node.specifiers; i < list.length; i += 1)
-      {
-      var spec = list[i];
-
-      c(spec, st);
-    }
-    c(node.source, st, "Expression");
-  };
-  base.ImportExpression = function (node, st, c) {
-    c(node.source, st, "Expression");
-  };
-  base.ImportSpecifier = base.ImportDefaultSpecifier = base.ImportNamespaceSpecifier = base.Identifier = base.PrivateIdentifier = base.Literal = ignore;
-
-  base.TaggedTemplateExpression = function (node, st, c) {
-    c(node.tag, st, "Expression");
-    c(node.quasi, st, "Expression");
-  };
-  base.ClassDeclaration = base.ClassExpression = function (node, st, c) { return c(node, st, "Class"); };
-  base.Class = function (node, st, c) {
-    if (node.id) { c(node.id, st, "Pattern"); }
-    if (node.superClass) { c(node.superClass, st, "Expression"); }
-    c(node.body, st);
-  };
-  base.ClassBody = function (node, st, c) {
-    for (var i = 0, list = node.body; i < list.length; i += 1)
-      {
-      var elt = list[i];
-
-      c(elt, st);
-    }
-  };
-  base.MethodDefinition = base.PropertyDefinition = base.Property = function (node, st, c) {
-    if (node.computed) { c(node.key, st, "Expression"); }
-    if (node.value) { c(node.value, st, "Expression"); }
-  };
-
-  exports.ancestor = ancestor;
-  exports.base = base;
-  exports.findNodeAfter = findNodeAfter;
-  exports.findNodeAround = findNodeAround;
-  exports.findNodeAt = findNodeAt;
-  exports.findNodeBefore = findNodeBefore;
-  exports.full = full;
-  exports.fullAncestor = fullAncestor;
-  exports.make = make;
-  exports.recursive = recursive;
-  exports.simple = simple;
-
-  Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
 
 
 /***/ }),
